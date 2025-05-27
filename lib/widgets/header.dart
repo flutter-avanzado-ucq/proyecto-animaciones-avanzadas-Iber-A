@@ -10,7 +10,8 @@ class Header extends StatelessWidget {
       width: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
+          // Cambio a colores más bonitos xd
+          colors: [Color.fromARGB(255, 66, 203, 221), Color(0xFFE100FF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -29,7 +30,8 @@ class Header extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text(
-                'Hola, Liliana 👋',
+                // Cambio de icono
+                'Hola, Iber 🗣️',
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
               Text(

@@ -27,7 +27,8 @@ class TaskCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDone ? Colors.green.shade100 : Colors.white,
+          // Cambio a colores
+          color: isDone ? const Color.fromARGB(255, 122, 241, 206) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -44,9 +45,11 @@ class TaskCard extends StatelessWidget {
               animation: iconRotation,
               builder: (context, child) {
                 return Transform.rotate(
-                  angle: isDone ? iconRotation.value * pi : 0,
+                  // la animación para que de 180 grados
+                  angle: isDone ? iconRotation.value * pi  : 0,
                   child: Icon(
                     isDone ? Icons.check_circle : Icons.radio_button_unchecked,
+                    // Cambio a colores
                     color: isDone ? Colors.green : Colors.grey,
                   ),
                 );
