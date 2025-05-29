@@ -81,6 +81,38 @@ class _TaskScreenState extends State<TaskScreen>
                       child: SlideAnimation(
                         verticalOffset: 50.0,
                         child: FadeInAnimation(
+                          // Animación para borrar deslizando
+                          child: Dismissible(
+                          key: ValueKey(task['title']),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (_){
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                if(index < _tasks.length){
+                                  _removeTask(index);
+                                }
+                              },
+                            );
+                          },
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16, 
+                              vertical: 8
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade300,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          // fin de la seccion se agrega deslizamiento para eliminar tarea
                           child: TaskCard(
                             title: task['title'],
                             isDone: task['done'],
@@ -90,6 +122,7 @@ class _TaskScreenState extends State<TaskScreen>
                           ),
                         ),
                       ),
+                      )
                     );
                   },
                 ),
@@ -105,7 +138,7 @@ class _TaskScreenState extends State<TaskScreen>
           borderRadius: BorderRadius.circular(14),
         ),
         child: AnimatedIcon(
-          icon: AnimatedIcons.add_event,
+          icon: AnimatedIcons.menu_close, // Cambio de icono
           progress: _iconController,
         ),
       ),
