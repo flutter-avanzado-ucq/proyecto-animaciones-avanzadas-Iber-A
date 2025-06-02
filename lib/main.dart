@@ -2,9 +2,17 @@
 import 'package:flutter/material.dart';
 import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
+// Se agregan nuevos imports
+import 'package:provider/provider.dart';
+import 'provider_task/task_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => TaskProvider(),
+      child: const MyApp(),
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {

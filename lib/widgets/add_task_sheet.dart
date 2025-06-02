@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+// Se agregaron nuevos paquetes
+import 'package:provider/provider.dart';
+import 'package:tareas/provider_task/task_provider.dart';
 
 class AddTaskSheet extends StatefulWidget {
-  final Function(String) onSubmit;
+  //Eliminar codigo
+  // final Function(String) onSubmit;
 
-  const AddTaskSheet({super.key, required this.onSubmit});
+//Eliminar lña linea: requiered this.onSubmit
+  const AddTaskSheet({super.key});
 
   @override
   State<AddTaskSheet> createState() => _AddTaskSheetState();
@@ -12,10 +17,18 @@ class AddTaskSheet extends StatefulWidget {
 class _AddTaskSheetState extends State<AddTaskSheet> {
   final _controller = TextEditingController();
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _submit() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
-      widget.onSubmit(text);
+      //Eliminar codigo
+      //widget.onSubmit(text);
+      Provider.of<TaskProvider>(context, listen: false).addTask(text);
       Navigator.pop(context);
     }
   }
