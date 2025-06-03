@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
@@ -7,6 +8,7 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onToggle;
   final VoidCallback onDelete;
   final Animation<double> iconRotation;
+  final DateTime? dueDate;
 
   const TaskCard({
     super.key,
@@ -15,6 +17,7 @@ class TaskCard extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     required this.iconRotation,
+    this.dueDate,
   });
 
   @override
@@ -63,6 +66,17 @@ class TaskCard extends StatelessWidget {
               color: isDone ? Colors.black54 : Colors.black87,
             ),
           ),
+          // Agregación para la fecha
+          subtitle: dueDate != null // Chequea si dueDate no es nullo
+              ? Text(
+                  'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}', // Formato de fecha
+                  style: const TextStyle(
+                      fontSize: 12, 
+                      color: Colors.grey
+                      ),
+                )
+              : null,
+          // Fin de la fecha    
           trailing: IconButton(
             icon: const Icon(Icons.delete, color: Colors.redAccent),
             onPressed: onDelete,

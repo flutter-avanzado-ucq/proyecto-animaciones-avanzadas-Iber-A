@@ -134,6 +134,7 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
                             key: ValueKey(task.title),
                               title: task.title,
                               isDone: task.done,
+                              dueDate: task.dueDate,
                             //onToggle: () => _toggleComplete(index),
                             onToggle: () {
                                 taskProvider.toggleTask(index);
