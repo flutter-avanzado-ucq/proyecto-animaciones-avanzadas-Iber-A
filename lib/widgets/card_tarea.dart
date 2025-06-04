@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../provider_task/ edit_task_sheet.dart';
+
 class TaskCard extends StatelessWidget {
   final String title;
   final bool isDone;
@@ -9,6 +11,9 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onDelete;
   final Animation<double> iconRotation;
   final DateTime? dueDate;
+  //Agregar nueva variable
+  final int index;
+
 
   const TaskCard({
     super.key,
@@ -17,7 +22,8 @@ class TaskCard extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     required this.iconRotation,
-    this.dueDate,
+    this.dueDate, 
+    required this.index,
   });
 
   @override
@@ -48,11 +54,9 @@ class TaskCard extends StatelessWidget {
               animation: iconRotation,
               builder: (context, child) {
                 return Transform.rotate(
-                  // la animación para que de 180 grados
                   angle: isDone ? iconRotation.value * pi  : 0,
                   child: Icon(
                     isDone ? Icons.check_circle : Icons.radio_button_unchecked,
-                    // Cambio a colores
                     color: isDone ? Colors.green : Colors.grey,
                   ),
                 );
@@ -66,8 +70,7 @@ class TaskCard extends StatelessWidget {
               color: isDone ? Colors.black54 : Colors.black87,
             ),
           ),
-          // Agregación para la fecha
-          subtitle: dueDate != null // Chequea si dueDate no es nullo
+          subtitle: dueDate != null
               ? Text(
                   'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}', // Formato de fecha
                   style: const TextStyle(
@@ -76,10 +79,28 @@ class TaskCard extends StatelessWidget {
                       ),
                 )
               : null,
-          // Fin de la fecha    
-          trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.redAccent),
-            onPressed: onDelete,
+          // Nueva funcion para editar la tarea con un boton
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.blue),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    builder: (_) => EditTaskSheet(index: index),
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                onPressed: onDelete,
+              ),
+            ],
           ),
         ),
       ),
