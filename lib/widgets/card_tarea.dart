@@ -36,7 +36,6 @@ class TaskCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          // Cambio a colores
           color: isDone ? const Color.fromARGB(255, 122, 241, 206) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -79,7 +78,7 @@ class TaskCard extends StatelessWidget {
                       ),
                 )
               : null,
-          // Nueva funcion para editar la tarea con un boton
+// Nueva funcion para editar la tarea con un boton
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -96,6 +95,7 @@ class TaskCard extends StatelessWidget {
                   );
                 },
               ),
+// Fin de edición
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: onDelete,
