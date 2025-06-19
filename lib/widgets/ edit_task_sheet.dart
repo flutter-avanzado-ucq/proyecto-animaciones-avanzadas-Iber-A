@@ -3,50 +3,54 @@ import 'package:provider/provider.dart';
 import '../provider_task/task_provider.dart';
 import '../services/notification_service.dart';
 
-class AddTaskSheet extends StatefulWidget {
-  const AddTaskSheet({super.key});
+class EditTaskSheet extends StatefulWidget {
+  final int index;
+
+  const EditTaskSheet({super.key, required this.index});
 
   @override
-  State<AddTaskSheet> createState() => _AddTaskSheetState();
+  State<EditTaskSheet> createState() => _EditTaskSheetState();
 }
 
-class _AddTaskSheetState extends State<AddTaskSheet> {
-  final _controller = TextEditingController(); // Controla el input del usuario.
-  DateTime? _selectedDate; // Fecha seleccionada para vencimiento.
+class _EditTaskSheetState extends State<EditTaskSheet> {
+  late TextEditingController _controller;
+  DateTime? _selectedDate;
 
   @override
-  void dispose() {
-    _controller.dispose(); // Libera recursos del controlador de texto.
-    super.dispose();
+  void initState() {
+    super.initState();
+    final task = Provider.of<TaskProvider>(context, listen: false).tasks[widget.index];
+    _controller = TextEditingController(text: task.title);
+    _selectedDate = task.dueDate;
   }
 
   void _submit() async {
-    final text = _controller.text.trim(); // Elimina espacios en blanco.
-    if (text.isNotEmpty) {
-      // 1. Agrega la tarea al proveedor de estado.
-      Provider.of<TaskProvider>(context, listen: false).addTask(
-        text,
-        dueDate: _selectedDate,
+    final newTitle = _controller.text.trim();
+    if (newTitle.isNotEmpty) {
+      Provider.of<TaskProvider>(context, listen: false).updateTask(
+        widget.index,
+        newTitle,
+        newDate: _selectedDate,
       );
 
-      // 2. Envia una notificación inmediata informando que se agregó la tarea.
+      // Notificación inmediata al editar tarea
       await NotificationService.showImmediateNotification(
-        title: 'Nueva tarea',
-        body: 'Has agregado la tarea: $text',
-        payload: 'Tarea: $text', // Este texto será accesible si se toca la notificación.
+        title: 'Tarea actualizada',
+        body: 'Has actualizado la tarea: $newTitle',
+        payload: 'Tarea actualizada: $newTitle',
       );
 
-      // 3. Si el usuario seleccionó una fecha, programa una notificación futura.
+      // Notificación programada si se establece o cambia la fecha
       if (_selectedDate != null) {
         await NotificationService.scheduleNotification(
-          title: 'Recordatorio de tarea',
-          body: 'No olvides: $text',
+          title: 'Recordatorio de tarea actualizada',
+          body: 'No olvides: $newTitle',
           scheduledDate: _selectedDate!,
-          payload: 'Tarea programada: $text para ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+          payload: 'Tarea actualizada: $newTitle para ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
         );
       }
 
-      Navigator.pop(context); // Cierra la hoja inferior.
+      Navigator.pop(context);
     }
   }
 
@@ -54,13 +58,13 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: now,
+      initialDate: _selectedDate ?? now,
       firstDate: now,
       lastDate: DateTime(now.year + 5),
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked; // Guarda la fecha seleccionada.
+        _selectedDate = picked;
       });
     }
   }
@@ -77,13 +81,13 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Agregar nueva tarea', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Editar tarea', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Descripción',
+              labelText: 'Título',
               border: OutlineInputBorder(),
             ),
             onSubmitted: (_) => _submit(),
@@ -93,7 +97,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             children: [
               ElevatedButton(
                 onPressed: _pickDate,
-                child: const Text('Seleccionar fecha'),
+                child: const Text('Cambiar fecha'),
               ),
               const SizedBox(width: 10),
               if (_selectedDate != null)
@@ -104,7 +108,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
           ElevatedButton.icon(
             onPressed: _submit,
             icon: const Icon(Icons.check),
-            label: const Text('Agregar tarea'),
+            label: const Text('Guardar cambios'),
           ),
         ],
       ),

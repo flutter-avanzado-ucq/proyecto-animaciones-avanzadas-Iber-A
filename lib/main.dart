@@ -1,17 +1,29 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
-// Se agregan nuevos imports
 import 'package:provider/provider.dart';
 import 'provider_task/task_provider.dart';
 
-void main() {
+// 🔔 Importar el servicio de notificaciones
+import 'services/notification_service.dart';
+
+
+void main() async {
+  // Asegura que Flutter esté inicializado
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar notificaciones
+  await NotificationService.init(); // Método actualizado
+
+  // Pedir permiso para notificaciones (Android 13+ y iOS)
+  await NotificationService.requestPermissions(); // Método actualizado
+
+  // Iniciar la app
   runApp(
     ChangeNotifierProvider(
       create: (_) => TaskProvider(),
       child: const MyApp(),
-      )
+    ),
   );
 }
 
