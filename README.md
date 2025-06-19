@@ -1,6 +1,6 @@
 ## Cambios
 
-1. Se eliminaron comentarios de anteriores modificaciones para evitar confuciones
-2. Se agregó el archivo sheet.dart
-3. En task_provider.dart se agregó la funcion de editar tarea
-3. En card_tarea.dart se agregó una variable nueva y los botones junto con icono nesesario para hacer la edición
+1.- Se añadieron los archivos enviados por classroom
+2.- Se creó notification_service.dart
+3.- Se agregaron dependencias nuevas y se bajó la version de flutter
+4.- En el main.dart del classroom se modificó algunos nombres
