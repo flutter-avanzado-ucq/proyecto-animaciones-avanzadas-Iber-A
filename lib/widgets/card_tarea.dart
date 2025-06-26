@@ -1,8 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../provider_task/ edit_task_sheet.dart';
+import 'package:tareas/widgets/%20edit_task_sheet.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
@@ -11,9 +10,7 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onDelete;
   final Animation<double> iconRotation;
   final DateTime? dueDate;
-  //Agregar nueva variable
   final int index;
-
 
   const TaskCard({
     super.key,
@@ -22,28 +19,28 @@ class TaskCard extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     required this.iconRotation,
-    this.dueDate, 
     required this.index,
+    this.dueDate,
   });
 
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
-      duration: const Duration(milliseconds: 400),
-      opacity: isDone ? 0.6 : 1.0,
+      duration: const Duration(milliseconds: 500),
+      opacity: isDone ? 0.4 : 1.0,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: const EdgeInsets.all(12),
+        duration: const Duration(milliseconds: 500),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDone ? const Color.fromARGB(255, 122, 241, 206) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: isDone ? const Color(0xFFD0F0C0) : const Color(0xFFFFF8E1),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
           ],
         ),
         child: ListTile(
@@ -53,32 +50,49 @@ class TaskCard extends StatelessWidget {
               animation: iconRotation,
               builder: (context, child) {
                 return Transform.rotate(
-                  angle: isDone ? iconRotation.value * pi  : 0,
+                  angle: iconRotation.value * pi,
                   child: Icon(
-                    isDone ? Icons.check_circle : Icons.radio_button_unchecked,
-                    color: isDone ? Colors.green : Colors.grey,
+                    isDone ? Icons.refresh : Icons.radio_button_unchecked,
+                    color: isDone ? Colors.teal : Colors.grey,
+                    size: 30,
                   ),
                 );
               },
             ),
           ),
-          title: Text(
-            title,
-            style: TextStyle(
-              decoration: isDone ? TextDecoration.lineThrough : null,
-              color: isDone ? Colors.black54 : Colors.black87,
-            ),
-          ),
-          subtitle: dueDate != null
-              ? Text(
-                  'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}', // Formato de fecha
-                  style: const TextStyle(
-                      fontSize: 12, 
-                      color: Colors.grey
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  decoration: isDone ? TextDecoration.lineThrough : null,
+                  fontSize: 18,
+                  color: isDone ? Colors.black45 : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (dueDate != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      // Integración Hive: la hora y fecha se extraen de dueDate, que es un DateTime completo
+                      Text(
+                        'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
-                )
-              : null,
-// Nueva funcion para editar la tarea con un boton
+                      Text(
+                        'Hora: ${DateFormat('HH:mm').format(dueDate!)}',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -95,7 +109,6 @@ class TaskCard extends StatelessWidget {
                   );
                 },
               ),
-// Fin de edición
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: onDelete,

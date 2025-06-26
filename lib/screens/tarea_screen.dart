@@ -17,7 +17,7 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
   late AnimationController _iconController;
 
   @override
-  void initState() {  
+  void initState() {
     super.initState();
     _iconController = AnimationController(
       vsync: this,
@@ -65,7 +65,8 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
                         verticalOffset: 30.0,
                         child: FadeInAnimation(
                           child: Dismissible(
-                            key: ValueKey(task.title),
+                            // Integración Hive: uso de task.key (HiveObject)
+                            key: ValueKey(task.key),
                             direction: DismissDirection.endToStart,
                             onDismissed: (_) => taskProvider.removeTask(index),
                             background: Container(
@@ -79,7 +80,7 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
                               child: const Icon(Icons.delete, color: Colors.white),
                             ),
                             child: TaskCard(
-                              key: ValueKey(task.title),
+                              key: ValueKey(task.key), // Integración Hive: uso de task.key
                               title: task.title,
                               isDone: task.done,
                               dueDate: task.dueDate,

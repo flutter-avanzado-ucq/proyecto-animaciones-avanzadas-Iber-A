@@ -1,6 +1,6 @@
 ## Cambios
 
 1.- Se añadieron los archivos enviados por classroom
-2.- Se creó notification_service.dart
-3.- Se agregaron dependencias nuevas y se bajó la version de flutter
-4.- En el main.dart del classroom se modificó algunos nombres
+2.- Se creó la carpeta de models y task_model.dart
+3.- Se agregaron dependencias nuevas
+4.- No me funcionó la de guardar la hora no se el porqué

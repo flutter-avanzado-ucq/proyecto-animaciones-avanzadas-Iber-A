@@ -11,42 +11,56 @@ class AddTaskSheet extends StatefulWidget {
 }
 
 class _AddTaskSheetState extends State<AddTaskSheet> {
-  final _controller = TextEditingController(); // Controla el input del usuario.
-  DateTime? _selectedDate; // Fecha seleccionada para vencimiento.
+  final _controller = TextEditingController();
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
-    _controller.dispose(); // Libera recursos del controlador de texto.
+    _controller.dispose();
     super.dispose();
   }
 
   void _submit() async {
-    final text = _controller.text.trim(); // Elimina espacios en blanco.
+    final text = _controller.text.trim();
     if (text.isNotEmpty) {
-      // 1. Agrega la tarea al proveedor de estado.
-      Provider.of<TaskProvider>(context, listen: false).addTask(
-        text,
-        dueDate: _selectedDate,
-      );
+      int? notificationId;
+      DateTime? finalDueDate;
 
-      // 2. Envia una notificación inmediata informando que se agregó la tarea.
       await NotificationService.showImmediateNotification(
         title: 'Nueva tarea',
         body: 'Has agregado la tarea: $text',
-        payload: 'Tarea: $text', // Este texto será accesible si se toca la notificación.
+        payload: 'Tarea: $text',
       );
 
-      // 3. Si el usuario seleccionó una fecha, programa una notificación futura.
-      if (_selectedDate != null) {
+      if (_selectedDate != null && _selectedTime != null) {
+        finalDueDate = DateTime(
+          _selectedDate!.year,
+          _selectedDate!.month,
+          _selectedDate!.day,
+          _selectedTime!.hour,
+          _selectedTime!.minute,
+        );
+
+        notificationId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
         await NotificationService.scheduleNotification(
           title: 'Recordatorio de tarea',
           body: 'No olvides: $text',
-          scheduledDate: _selectedDate!,
-          payload: 'Tarea programada: $text para ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+          scheduledDate: finalDueDate,
+          payload: 'Tarea programada: $text para $finalDueDate',
+          notificationId: notificationId,
         );
       }
 
-      Navigator.pop(context); // Cierra la hoja inferior.
+      // Integración Hive: guardar la tarea en Provider + Hive
+      Provider.of<TaskProvider>(context, listen: false).addTask(
+        text,
+        dueDate: finalDueDate ?? _selectedDate, // Integración Hive: se pasa la fecha completa
+        notificationId: notificationId,
+      );
+
+      Navigator.pop(context);
     }
   }
 
@@ -60,7 +74,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked; // Guarda la fecha seleccionada.
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked;
+        print(_selectedTime);
       });
     }
   }
@@ -97,7 +124,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               ),
               const SizedBox(width: 10),
               if (_selectedDate != null)
-                Text('${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}')
+                Text('${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: _pickTime,
+                child: const Text('Seleccionar hora'),
+              ),
+              const SizedBox(width: 10),
+              const Text('Hora: '),
+              if (_selectedTime != null)
+                Text('${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}'),
             ],
           ),
           const SizedBox(height: 12),
